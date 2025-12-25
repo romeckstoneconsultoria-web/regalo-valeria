@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feliz Navidad Babee!! 🎄</title>
+  <meta name="theme-color" content="#0b1020" />
+  <style>
+    :root{
+      --bg1:#070b18;
+      --bg2:#0f1b3d;
+      --glass: rgba(255,255,255,.09);
+      --glass2: rgba(255,255,255,.14);
+      --stroke: rgba(255,255,255,.16);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.58);
+      --shadow: 0 26px 72px rgba(0,0,0,.46);
+      --radius: 26px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body{
+      margin:0;
+      overflow-x:hidden;
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(255,90,132,.12), transparent 62%),
+        radial-gradient(1100px 800px at 85% 18%, rgba(76,181,255,.12), transparent 60%),
+        radial-gradient(900px 700px at 55% 95%, rgba(97,255,202,.10), transparent 62%),
+        linear-gradient(135deg, var(--bg1), var(--bg2) 55%, var(--bg1));
+      position: relative;
+      isolation: isolate;
+    }
+
+    /* Subtle animated sheen (premium, very soft) */
+    .sheen{
+      position: fixed;
+      inset: -35%;
+      z-index: -4;
+      pointer-events: none;
+      background: conic-gradient(from 180deg at 50% 50%,
+        rgba(255,255,255,0.00),
+        rgba(255,255,255,0.035),
+        rgba(255,255,255,0.00),
+        rgba(255,255,255,0.028),
+        rgba(255,255,255,0.00));
+      animation: sheenMove 26s linear infinite;
+      opacity: .55;
+      filter: blur(18px);
+    }
+    @keyframes sheenMove{
+      from{ transform: rotate(0deg); }
+      to{ transform: rotate(360deg); }
+    }
+
+    /* Soft vignette */
+    .vignette{
+      position: fixed; inset: 0; z-index: -1;
+      pointer-events:none;
+      background: radial-gradient(1100px 760px at 50% 18%, transparent 42%, rgba(0,0,0,.40) 100%);
+    }
+
+    /* Snow canvas (light) */
+    canvas#snow{
+      position: fixed; inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: .55;
+    }
+
+    .container{
+      width: min(980px, 92vw);
+      margin: 7.5vh auto 7vh;
+      padding: 22px;
+    }
+
+    .hero{
+      position: relative;
+      padding: 30px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--glass2), var(--glass));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(560px 220px at 18% 8%, rgba(255,90,132,.12), transparent 62%),
+        radial-gradient(520px 220px at 85% 14%, rgba(76,181,255,.12), transparent 62%),
+        radial-gradient(520px 240px at 55% 112%, rgba(97,255,202,.10), transparent 66%);
+      opacity:.9;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .hero > *{ position:relative; z-index:1; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .2px;
+
+      opacity: 0;
+      transform: translateY(8px);
+      animation: fadeUp .7s ease forwards .05s;
+    }
+
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.05;
+      letter-spacing: .2px;
+
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp .85s ease forwards .12s;
+    }
+
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 16px;
+      max-width: 80ch;
+
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp .9s ease forwards .22s;
+    }
+
+    @keyframes fadeUp{
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+
+      opacity:0;
+      transform: translateY(10px);
+      animation: fadeUp .85s ease forwards .32s;
+    }
+
+    .card{
+      grid-column: span 12;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      padding: 18px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.24);
+      cursor: pointer;
+      user-select:none;
+
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle highlight sweep (very minimal) */
+    .card::after{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-70%;
+      width: 55%;
+      height: 190%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+      transform: rotate(18deg);
+      opacity:0;
+      transition: opacity .2s ease;
+    }
+    .card:hover::after{ opacity:1; animation: sweep .9s ease; }
+    @keyframes sweep{
+      from { left:-70%; }
+      to   { left:130%; }
+    }
+
+    .card:hover{
+      transform: translateY(-2px);
+      background: rgba(0,0,0,.18);
+      border-color: rgba(255,255,255,.18);
+    }
+    .card:active{ transform: translateY(-1px) scale(.99); }
+
+    .cardTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+
+    .cardTitle{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-weight: 760;
+      letter-spacing: .2px;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .pill{
+      font-size: 12px;
+      color: rgba(255,255,255,.70);
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      white-space: nowrap;
+    }
+
+    .cardDesc{
+      margin: 10px 0 0;
+      color: var(--muted2);
+      line-height: 1.65;
+      font-size: 14px;
+      max-width: 70ch;
+    }
+
+    .hint{
+      margin-top: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: rgba(255,255,255,.58);
+      font-size: 13px;
+
+      opacity:0;
+      transform: translateY(10px);
+      animation: fadeUp .85s ease forwards .42s;
+    }
+    .hint strong{ color: var(--text); font-weight: 700; }
+
+    @media (min-width: 760px){
+      .card:nth-child(1){ grid-column: span 4; }
+      .card:nth-child(2){ grid-column: span 4; }
+      .card:nth-child(3){ grid-column: span 4; }
+    }
+
+    /* Modal */
+    .modal{
+      position: fixed; inset: 0;
+      display:none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.58);
+      z-index: 50;
+    }
+    .modal.show{ display:flex; }
+
+    .sheet{
+      width: min(720px, 95vw);
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+      box-shadow: 0 30px 90px rgba(0,0,0,.58);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+
+      transform: translateY(14px) scale(.985);
+      opacity: 0;
+      animation: popIn .20s ease forwards;
+    }
+    @keyframes popIn{
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .sheetHeader{
+      padding: 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+
+    .sheetHeader h2{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+
+    .closeBtn{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.88);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: background .2s ease, transform .08s ease;
+    }
+    .closeBtn:hover{ background: rgba(255,255,255,.10); }
+    .closeBtn:active{ transform: scale(.98); }
+
+    .sheetBody{
+      padding: 18px;
+      color: rgba(255,255,255,.84);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    .sheetBody p{
+      margin: 0 0 12px;
+      color: rgba(255,255,255,.82);
+    }
+
+    .reasons{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,.76);
+    }
+    .reasons li{ margin: 8px 0; }
+
+    .footerNote{
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: rgba(255,255,255,.60);
+      font-size: 13px;
+    }
+
+    .card:focus-visible, .closeBtn:focus-visible{
+      outline: 3px solid rgba(76,181,255,.45);
+      outline-offset: 3px;
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation: none !important; transition: none !important; }
+      .sheen{ display:none; }
+      canvas#snow{ display:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sheen" aria-hidden="true"></div>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <main class="container">
+    <section class="hero">
+      <span class="badge">🎁 Un regalito digital • hecho con cariño</span>
+
+      <h1>Feliz Navidad Babee!! 🎄</h1>
+
+      <p class="subtitle">
+        Si bien hoy no pudimos estar juntos, de todas formas quisiera que hoy recibas un presente de mi parte,
+        aparte de los que te daré luego jeje, de verdad que no tengo palabras más que decirte gracias por haber aparecido en mi vida,
+        te has vuelto alguien tan importante y especial para mi que ya no hay momento en el que no piense en estar contigo,
+        y si bien no me alcanzaría una página para escribir todo lo que siento por ti, te lo puedo resumir en estas 3 opciones.
+      </p>
+
+      <div class="grid" aria-label="Opciones">
+        <div class="card" id="optReasons" role="button" tabindex="0">
+          <div class="cardTop">
+            <h3 class="cardTitle">Ver 5 razones</h3>
+            <span class="pill">Abrir</span>
+          </div>
+          <p class="cardDesc">
+            Un resumen corto y sincero de lo que más me encanta de ti.
+          </p>
+        </div>
+
+        <div class="card" id="optPromise" role="button" tabindex="0">
+          <div class="cardTop">
+            <h3 class="cardTitle">Promesa</h3>
+            <span class="pill">Abrir</span>
+          </div>
+          <p class="cardDesc">
+            Una promesa simple: estar ahí, siempre.
+          </p>
+        </div>
+
+        <div class="card" id="optSurprise" role="button" tabindex="0">
+          <div class="cardTop">
+            <h3 class="cardTitle">Sorpresa</h3>
+            <span class="pill">Abrir</span>
+          </div>
+          <p class="cardDesc">
+            Hay más… pero con reglas (y vale la pena).
+          </p>
+        </div>
+      </div>
+
+      <div class="hint">
+        <span>Tip: abre cada opción con calma.</span>
+        <span><strong>De:</strong> tu nerd enamorado</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="sheetHeader">
+        <h2 id="modalTitle">Título</h2>
+        <button class="closeBtn" id="closeBtn" aria-label="Cerrar">Cerrar</button>
+      </div>
+      <div class="sheetBody" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Modal helpers ----------
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody  = document.getElementById("modalBody");
+    const closeBtn   = document.getElementById("closeBtn");
+
+    function openModal(title, html){
+      modalTitle.textContent = title;
+      modalBody.innerHTML = html;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      closeBtn.focus();
+    }
+    function closeModal(){
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
+    window.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
+
+    // ---------- Content ----------
+    const reasonsHTML = `
+      <p style="margin-top:0">
+        Si lo tengo que resumir, estas son 5 razones por las que me gustas tanto:
+      </p>
+      <ol class="reasons">
+        <li><b>Tu cabello hermoso y perfecto</b> que me vuelve loco.</li>
+        <li><b>Tus ojos grandes, bonitos y muy expresivos</b>.</li>
+        <li><b>Lo fácil que es hablar contigo</b>, siento que puedo hablar de todo.</li>
+        <li><b>Lo aplicada y pasional que eres</b>, es admirable.</li>
+        <li><b>Que al margen de todo, sigues luchando por salir adelante</b>… y ahora ten por seguro que me tienes a mí para darte una mano cuando lo necesites.</li>
+      </ol>
+      <div class="footerNote">
+        <span>Feliz Navidad, Babee.</span>
+        <span>🎄</span>
+      </div>
+    `;
+
+    const promiseHTML = `
+      <p style="margin-top:0">
+        Babe, desde ese momento en que nos dijimos sentir lo mismo, quiero que tengas algo claro:
+      </p>
+      <p>
+        <b>Siempre voy a estar ahí para ti</b>. Para celebrar lo bueno contigo, para acompañarte cuando algo sea difícil,
+        para escucharte de verdad y para cuidarte.
+      </p>
+      <p>
+        En las buenas y en las malas… <b>pero juntos</b>.
+      </p>
+      <div class="footerNote">
+        <span>Siempre.</span>
+        <span>🤍</span>
+      </div>
+    `;
+
+    const surpriseHTML = `
+      <p style="margin-top:0">
+        Tengo más sorpresas para ti, pero vas a tener que esperar a que nos veamos en persona,
+        y para la sorpresa principal tendrás que esperar a año nuevo, sorry pero esas son las reglas jaja.
+      </p>
+      <p>
+        <b>Te quiero mucho babe</b>, te mando un beso y abrazo gigante!!
+      </p>
+      <div class="footerNote">
+        <span>Próximo capítulo: en persona.</span>
+        <span>✨</span>
+      </div>
+    `;
+
+    // ---------- Click + keyboard support ----------
+    function clickable(el, fn){
+      el.addEventListener("click", fn);
+      el.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); fn(); }
+      });
+    }
+
+    clickable(document.getElementById("optReasons"), () => openModal("Ver 5 razones", reasonsHTML));
+    clickable(document.getElementById("optPromise"),  () => openModal("Promesa", promiseHTML));
+    clickable(document.getElementById("optSurprise"), () => openModal("Sorpresa", surpriseHTML));
+
+    // ---------- Snow animation (light + elegant) ----------
+    const canvas = document.getElementById("snow");
+    const ctx = canvas.getContext("2d");
+    let W=0, H=0, flakes=[];
+
+    function resize(){
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      const density = Math.min(140, Math.floor((W*H)/16000)); // lighter density
+      flakes = Array.from({length: density}, () => ({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: 0.6 + Math.random()*1.6,
+        vy: 0.35 + Math.random()*0.9,
+        vx: -0.18 + Math.random()*0.36,
+        a: 0.16 + Math.random()*0.35
+      }));
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function tick(){
+      ctx.clearRect(0,0,W,H);
+      for(const f of flakes){
+        f.y += f.vy;
+        f.x += f.vx;
+        f.x += Math.sin((f.y / 110)) * 0.08;
+
+        if(f.y > H + 10){ f.y = -10; f.x = Math.random()*W; }
+        if(f.x < -10) f.x = W + 10;
+        if(f.x > W + 10) f.x = -10;
+
+        ctx.globalAlpha = f.a;
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  </script>
+</body>
+</html>
